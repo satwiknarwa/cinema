@@ -1,30 +1,32 @@
-import MovieCard from "../components/MovieCard";
 import { useState, useEffect } from "react";
-import { searchMovies, getPopularMovies } from "../services/api";
+import MovieCard from "../components/MovieCard";
+import { searchMovies, getCategorizedMovies } from "../services/api";
 import "../css/Home.css";
 
 function Home() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [movies, setMovies] = useState([]);
+  const [categories, setCategories] = useState({});
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // Fetch multiple categories
   useEffect(() => {
-    const loadPopularMovies = async () => {
+    const loadMovies = async () => {
       try {
-        const popularMovies = await getPopularMovies();
-        setMovies(popularMovies);
+        const categorizedData = await getCategorizedMovies();
+        setCategories(categorizedData);
       } catch (err) {
-        console.log(err);
+        console.error(err);
         setError("Failed to load movies...");
       } finally {
         setLoading(false);
       }
     };
 
-    loadPopularMovies();
+    loadMovies();
   }, []);
 
+  // Search handler
   const handleSearch = async (e) => {
     e.preventDefault();
     if (!searchQuery.trim()) return;
@@ -33,10 +35,10 @@ function Home() {
     setLoading(true);
     try {
       const searchResults = await searchMovies(searchQuery);
-      setMovies(searchResults);
+      setCategories({ search: searchResults });
       setError(null);
     } catch (err) {
-      console.log(err);
+      console.error(err);
       setError("Failed to search movies...");
     } finally {
       setLoading(false);
@@ -53,25 +55,33 @@ function Home() {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
-        <button type="submit" className="search-button">
-          Search
-        </button>
+        <button type="submit" className="search-button">Search</button>
       </form>
-      <div className="hero-section">
-  <div className="hero-overlay">
-    <h1>Explore movies, search, and save your favourites!</h1>
-  </div>
-</div>
-
 
       {error && <div className="error-message">{error}</div>}
 
       {loading ? (
         <div className="loading">Loading...</div>
       ) : (
-        <div className="movies-grid">
-          {movies.map((movie) => (
-            <MovieCard movie={movie} key={movie.imdbID} />
+        <div className="categories">
+          {Object.entries(categories).map(([genre, movies]) => (
+            <div key={genre} className="category-section">
+              <h2 className="category-title">
+                {genre === "search"
+                  ? "Search Results"
+                  : `${genre.toUpperCase()} MOVIES`}
+              </h2>
+
+              <div className="movie-row">
+                {movies.length > 0 ? (
+                  movies.map((movie) => (
+                    <MovieCard movie={movie} key={movie.imdbID} />
+                  ))
+                ) : (
+                  <p>No movies found</p>
+                )}
+              </div>
+            </div>
           ))}
         </div>
       )}
