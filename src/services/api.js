@@ -15,7 +15,16 @@ export async function getMoviesByCategory(category) {
 
 // 🔹 Fetch multiple categories (Action, Comedy, etc.)
 export async function getCategorizedMovies() {
-  const categories = ["action", "comedy", "romance", "drama", "sci-fi", "thriller","horror"];
+  const categories = [
+    "action",
+    "comedy",
+    "romance",
+    "drama",
+    "sci-fi",
+    "thriller",
+    "horror", // included in your categories
+  ];
+
   const results = {};
 
   for (const category of categories) {
@@ -28,7 +37,9 @@ export async function getCategorizedMovies() {
 // 🔹 Search movies (for search bar)
 export async function searchMovies(query) {
   try {
-    const res = await fetch(`${BASE_URL}?s=${encodeURIComponent(query)}&apikey=${API_KEY}`);
+    const res = await fetch(
+      `${BASE_URL}?s=${encodeURIComponent(query)}&apikey=${API_KEY}`
+    );
     const data = await res.json();
 
     if (data.Response === "False") throw new Error(data.Error || "No movies found");
@@ -36,5 +47,26 @@ export async function searchMovies(query) {
   } catch (error) {
     console.error("Error searching movies:", error);
     throw error;
+  }
+}
+
+// 🔹 Fetch only latest movies (Year 2025)
+export async function getLatestMovies() {
+  try {
+    // Fetch movies released in 2025 — you can modify 'movie' keyword if you want more variety
+    const res = await fetch(
+      `${BASE_URL}?s=movie&y=2025&type=movie&apikey=${API_KEY}`
+    );
+    const data = await res.json();
+
+    if (data.Response === "False") {
+      console.warn("No latest 2025 movies found");
+      return [];
+    }
+
+    return data.Search || [];
+  } catch (error) {
+    console.error("Error fetching latest 2025 movies:", error);
+    return [];
   }
 }

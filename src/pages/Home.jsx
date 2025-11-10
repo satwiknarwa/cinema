@@ -1,19 +1,26 @@
 import { useState, useEffect } from "react";
 import MovieCard from "../components/MovieCard";
-import { searchMovies, getCategorizedMovies } from "../services/api";
+import { searchMovies, getCategorizedMovies, getLatestMovies } from "../services/api";
 import "../css/Home.css";
 
 function Home() {
   const [searchQuery, setSearchQuery] = useState("");
   const [categories, setCategories] = useState({});
+  const [latestMovies, setLatestMovies] = useState([]);  // 👈 New
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Fetch multiple categories
+  // Fetch latest (2025) + categorized movies
   useEffect(() => {
     const loadMovies = async () => {
       try {
-        const categorizedData = await getCategorizedMovies();
+        // Fetch both latest and categorized movies in parallel
+        const [latest, categorizedData] = await Promise.all([
+          getLatestMovies(),
+          getCategorizedMovies(),
+        ]);
+
+        setLatestMovies(latest);
         setCategories(categorizedData);
       } catch (err) {
         console.error(err);
@@ -61,9 +68,25 @@ function Home() {
       {error && <div className="error-message">{error}</div>}
 
       {loading ? (
-        <div className="loading">Loading...</div>
+        <div className="loading">Movies are loading....</div>
       ) : (
         <div className="categories">
+
+          {/* ✅ Show latest 2025 movies first */}
+          <div className="category-section">
+            <h2 className="category-title">LATEST 2025 MOVIES</h2>
+            <div className="movie-row">
+              {latestMovies.length > 0 ? (
+                latestMovies.map((movie) => (
+                  <MovieCard movie={movie} key={movie.imdbID || movie.id} />
+                ))
+              ) : (
+                <p>No latest movies found</p>
+              )}
+            </div>
+          </div>
+
+          {/* Other categories */}
           {Object.entries(categories).map(([genre, movies]) => (
             <div key={genre} className="category-section">
               <h2 className="category-title">
@@ -75,7 +98,7 @@ function Home() {
               <div className="movie-row">
                 {movies.length > 0 ? (
                   movies.map((movie) => (
-                    <MovieCard movie={movie} key={movie.imdbID} />
+                    <MovieCard movie={movie} key={movie.imdbID || movie.id} />
                   ))
                 ) : (
                   <p>No movies found</p>

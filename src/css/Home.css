@@ -199,3 +199,8 @@
   background-color: #ff1a1a;
   transform: scale(1.05);
 }
+.category-section:first-child .category-title {
+  color: #ff3333;
+  border-bottom: 3px solid red;
+  padding-bottom: 4px;
+}
