@@ -1,0 +1,110 @@
+
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 14px clamp(18px, 5vw, 48px);
+
+  background: rgba(10, 10, 12, 0.72);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
+}
+
+.navbar::before {
+  content: "";
+  position: absolute;
+  inset: 0 -20px auto -20px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
+  opacity: 0.4;
+}
+
+/* brand */
+.navbar-brand a {
+  font-weight: 800;
+  font-size: clamp(18px, 2.2vw, 26px);
+  letter-spacing: 0.5px;
+  color: #7aa2ff;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: transform 0.15s ease, text-shadow 0.15s ease;
+}
+
+.navbar-brand a:hover {
+  transform: translateY(-1px);
+  text-shadow: 0 6px 18px rgba(122,162,255,0.35);
+}
+
+
+.navbar-links {
+  display: flex;
+  align-items: center;
+  gap: clamp(14px, 2.8vw, 28px);
+}
+
+
+.navbar-link {
+  position: relative;
+  color: #e8e8e8;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: clamp(14px, 1.6vw, 16px);
+  padding: 8px 12px;
+  border-radius: 10px;
+  transition: color 0.15s ease, background-color 0.15s ease, transform 0.15s ease;
+}
+
+
+.navbar-link::after {
+  content: "";
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 6px;
+  height: 2px;
+  background: linear-gradient(90deg, #ff2d55, #ff8a4d);
+  border-radius: 2px;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.2s ease;
+  opacity: 0.9;
+}
+
+.navbar-link:hover {
+  background-color: rgba(255, 255, 255, 0.06);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.navbar-link:hover::after {
+  transform: scaleX(1);
+}
+
+.navbar-link:focus-visible,
+.navbar-brand a:focus-visible {
+  outline: 2px solid #7aa2ff;
+  outline-offset: 2px;
+  border-radius: 10px;
+}
+
+/* mobile tweaks */
+@media (max-width: 640px) {
+  .navbar {
+    padding: 12px 16px;
+  }
+  .navbar-links {
+    gap: 12px;
+  }
+  .navbar-link {
+    padding: 7px 10px;
+  }
+}
+
